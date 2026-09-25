@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEROVIA — Airport</title>
+<style>
+:root{
+  --bg:#080a0c; --panel:#101317; --panel2:#15191e; --line:#252b31;
+  --text:#f4f6f7; --muted:#89919a; --green:#66e3a1; --amber:#f2c66d; --red:#ff7474;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}
+a{color:inherit;text-decoration:none}
+.container{width:min(1180px,calc(100% - 36px));margin:auto}
+nav{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:800;letter-spacing:.22em;font-size:15px}
+.navlinks{display:flex;gap:26px;color:#9ca4ad;font-size:13px}
+.navlinks a:hover{color:#fff}
+.hero{padding:86px 0 64px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 80% 20%,#18201d 0,transparent 30%)}
+.eyebrow{color:var(--green);font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+h1{font-size:clamp(50px,9vw,104px);line-height:.9;letter-spacing:-.065em;margin:18px 0 24px;max-width:850px}
+.hero p{color:var(--muted);max-width:570px;font-size:17px;line-height:1.6}
+.search{margin-top:34px;display:flex;max-width:650px;border:1px solid var(--line);background:#0d1013;border-radius:10px;overflow:hidden}
+.search input{flex:1;background:transparent;border:0;color:#fff;padding:17px 18px;outline:0}
+.search button{border:0;background:#f4f6f7;color:#080a0c;padding:0 23px;font-weight:750;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.stat{padding:25px 18px;border-right:1px solid var(--line)}
+.stat:last-child{border:0}.stat small{color:var(--muted);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em}
+.stat strong{font-size:27px;margin-top:7px;display:block}
+section{padding:64px 0}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px}
+.sectionhead h2{font-size:30px;letter-spacing:-.03em;margin:0}
+.sectionhead span{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{background:transparent;color:var(--muted);border:1px solid var(--line);padding:9px 14px;border-radius:7px;cursor:pointer}
+.tab.active,.tab:hover{color:#fff;background:var(--panel2)}
+.table{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:1.1fr 1.5fr 1fr .8fr .8fr;gap:14px;padding:18px 20px;border-bottom:1px solid var(--line);align-items:center}
+.row:last-child{border:0}.row.head{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;background:#0c0f12}
+.flight{font-weight:700}.muted{color:var(--muted);font-size:13px}.status{font-size:12px;font-weight:700}.on{color:var(--green)}.boarding{color:var(--amber)}.delayed{color:var(--red)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:25px;min-height:190px}
+.card .icon{font-size:22px;margin-bottom:30px}.card h3{margin:0 0 8px}.card p{color:var(--muted);line-height:1.55;font-size:13px;margin:0}
+.map{height:430px;border:1px solid var(--line);border-radius:12px;background:#0d1013;position:relative;overflow:hidden}
+.map:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#1b2127 1px,transparent 1px),linear-gradient(90deg,#1b2127 1px,transparent 1px);background-size:55px 55px;opacity:.6}
+.terminal{position:absolute;left:12%;right:12%;top:42%;height:78px;border:1px solid #394149;background:#151a1f;border-radius:8px;display:flex;align-items:center;justify-content:space-around;z-index:2}
+.gate{width:34px;height:34px;border:1px solid #48515a;border-radius:50%;display:grid;place-items:center;font-size:10px;color:#c5cbd0}
+.runway{position:absolute;width:115%;height:34px;background:#20262c;transform:rotate(-16deg);left:-8%;top:16%;z-index:1}
+.maplabel{position:absolute;bottom:18px;left:18px;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;z-index:3}
+footer{border-top:1px solid var(--line);padding:30px 0;color:#6f7780;font-size:12px;display:flex;justify-content:space-between}
+.notice{display:none;margin-top:15px;color:var(--green);font-size:13px}
+@media(max-width:760px){
+ .navlinks{display:none}.stats{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:0}.stat{border-bottom:1px solid var(--line)}
+ .row{grid-template-columns:1fr 1fr}.row.head{display:none}.row > div:nth-child(2){display:none}
+ .cards{grid-template-columns:1fr}.hero{padding-top:60px}h1{font-size:62px}
+ .search button{padding:0 14px}.terminal{left:5%;right:5%}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+    <a class="logo" href="#">AEROVIA</a>
+    <div class="navlinks"><a href="#flights">Flights</a><a href="#map">Airport Map</a><a href="#services">Services</a></div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow">AEROVIA INTERNATIONAL · AVX</div>
+    <h1>MOVE<br>WITHOUT<br>FRICTION.</h1>
+    <p>A modern airport experience. Check departures, arrivals, gates and airport services from one clean dashboard.</p>
+    <div class="search">
+      <input id="searchInput" placeholder="Search any U.S. city or airport…" aria-label="Search flights">
+      <button onclick="searchFlights()">Search</button>
+    </div>
+    <div id="notice" class="notice"></div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="container" style="display:contents">
+    <div class="stat"><small>Terminal</small><strong>1</strong></div>
+    <div class="stat"><small>Gates</small><strong>42</strong></div>
+    <div class="stat"><small>Flights today</small><strong>186</strong></div>
+    <div class="stat"><small>On time</small><strong>94%</strong></div>
+  </div>
+</div>
+
+<section id="flights">
+<div class="container">
+  <div class="sectionhead"><h2>Flight board</h2><span>Friday · 25 September 2026</span></div>
+  <div class="tabs"><button class="tab active" onclick="setMode('Departures',this)">Departures</button><button class="tab" onclick="setMode('Arrivals',this)">Arrivals</button></div>
+  <div class="table" id="flightTable"></div>
+</div>
+</section>
+
+<section id="map">
+<div class="container">
+  <div class="sectionhead"><h2>Airport map</h2><span>Terminal 1 · All gates</span></div>
+  <div class="map">
+    <div class="runway"></div>
+    <div class="terminal">
+      <div class="gate">A1</div><div class="gate">A2</div><div class="gate">A3</div><div class="gate">A4</div><div class="gate">A5</div><div class="gate">A6</div><div class="gate">A7</div>
+    </div>
+    <div class="maplabel">Terminal 1 · Security · Baggage · Ground transport</div>
+  </div>
+</div>
+</section>
+
+<section id="services">
+<div class="container">
+  <div class="sectionhead"><h2>At the airport</h2><span>Everything you need</span></div>
+  <div class="cards">
+    <div class="card"><div class="icon">◉</div><h3>Security</h3><p>Security checkpoints are located on Level 2. Estimated wait: 8 minutes.</p></div>
+    <div class="card"><div class="icon">⌁</div><h3>Ground transport</h3><p>Rail, rideshare, taxis and rental cars are available outside Arrivals.</p></div>
+    <div class="card"><div class="icon">□</div><h3>Lounge</h3><p>AEROVIA Lounge is located above Gate A4. Open daily from 05:00–23:00.</p></div>
+  </div>
+</div>
+</section>
+
+<footer><div class="container" style="display:flex;justify-content:space-between;width:100%"><span>© 2026 AEROVIA</span><span>DEMO AIRPORT EXPERIENCE</span></div></footer>
+
+<script>
+const flights = {
+ Departures:[
+  ["AS 204","Portland · PDX","A12","18:20","Las Vegas · LAS","On time","on"],
+  ["WN 718","Los Angeles · LAX","A04","18:45","Las Vegas · LAS","Boarding","boarding"],
+  ["UA 331","Seattle · SEA","A19","19:10","Las Vegas · LAS","On time","on"],
+  ["AA 902","Dallas · DFW","A27","20:05","Las Vegas · LAS","On time","on"],
+  ["DL 118","Atlanta · ATL","A31","21:25","Las Vegas · LAS","Delayed 20m","delayed"],
+  ["B6 442","New York · JFK","A08","21:50","Las Vegas · LAS","On time","on"],
+  ["UA 721","Las Vegas · LAS","B03","22:15","Denver · DEN","On time","on"],
+  ["AS 515","Las Vegas · LAS","B11","22:40","Portland · PDX","On time","on"],
+  ["WN 288","Las Vegas · LAS","B15","23:05","Phoenix · PHX","Boarding","boarding"],
+  ["AA 614","Las Vegas · LAS","B21","23:30","Chicago · ORD","On time","on"]
+ ],
+ Arrivals:[
+  ["AS 203","Portland · PDX","A12","18:05","Las Vegas · LAS","On time","on"],
+  ["WN 717","Los Angeles · LAX","A04","18:30","Las Vegas · LAS","On time","on"],
+  ["UA 330","Seattle · SEA","A19","18:55","Las Vegas · LAS","Arriving","boarding"],
+  ["AA 901","Dallas · DFW","A27","19:25","Las Vegas · LAS","On time","on"],
+  ["DL 117","Atlanta · ATL","A31","20:40","Las Vegas · LAS","Delayed 15m","delayed"],
+  ["B6 441","New York · JFK","A08","21:05","Las Vegas · LAS","On time","on"],
+  ["UA 720","Las Vegas · LAS","B03","21:45","Denver · DEN","On time","on"],
+  ["AS 514","Las Vegas · LAS","B11","22:10","Portland · PDX","On time","on"],
+  ["WN 287","Las Vegas · LAS","B15","22:35","Phoenix · PHX","Arriving","boarding"],
+  ["AA 613","Las Vegas · LAS","B21","23:00","Chicago · ORD","On time","on"]
+ ]
+};
+let mode="Departures";
+function render(data=flights[mode]){
+ const table=document.getElementById("flightTable");
+ table.innerHTML='<div class="row head"><div>Flight</div><div>Route</div><div>Gate</div><div>Time</div><div>Status</div></div>'+
+ data.map(f=>`<div class="row"><div><span class="flight">${f[0]}</span><div class="muted">DEMO SCHEDULE</div></div><div>${f[1]} → ${f[4]}</div><div>${f[2]}</div><div>${f[3]}</div><div><div class="status ${f[6]}">${f[5]}</div><a class="muted" style="display:inline-block;margin-top:6px;text-decoration:underline" target="_blank" href="https://www.google.com/travel/flights">Find fares</a></div></div>`).join("");
+}
+function setMode(m,btn){mode=m;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));btn.classList.add("active");render()}
+function searchFlights(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ const notice=document.getElementById("notice");
+ if(!q){render();notice.style.display="none";return}
+ const all=Object.values(flights).flat();
+ const results=all.filter(f=>f.join(" ").toLowerCase().includes(q));
+ render(results);
+ notice.style.display="block";
+ notice.textContent=results.length
+   ? `${results.length} matching route${results.length>1?"s":""} found. Showing flights to and from “${document.getElementById("searchInput").value.trim()}”.`
+   : `No demo flights matched “${document.getElementById("searchInput").value.trim()}”. Try Las Vegas, Portland, Seattle, Denver, Phoenix, Chicago, or Los Angeles.`;
+}
+render();notice.style.display="none";return}
+ const results=Object.values(flights).flat().filter(f=>f.join(" ").toLowerCase().includes(q));
+ render(results);
+ notice.style.display="block";
+ notice.textContent=results.length?`${results.length} matching flight${results.length>1?"s":""} found.`:"No matching flights found.";
+}
+render();
+</script>
+</body>
+</html>
